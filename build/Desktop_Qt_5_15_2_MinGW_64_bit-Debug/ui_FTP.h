@@ -127,7 +127,7 @@ public:
 
         progressBar = new QProgressBar(widget);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
-        progressBar->setValue(24);
+        progressBar->setValue(0);
 
         horizontalLayout_3->addWidget(progressBar);
 
@@ -178,7 +178,7 @@ public:
 
         progressBar_2 = new QProgressBar(widget);
         progressBar_2->setObjectName(QString::fromUtf8("progressBar_2"));
-        progressBar_2->setValue(24);
+        progressBar_2->setValue(0);
 
         horizontalLayout_6->addWidget(progressBar_2);
 
