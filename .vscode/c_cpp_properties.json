@@ -4,7 +4,8 @@
             "name": "qt",
             "includePath": [
                 "d:/Qt/5.15.2/mingw81_64/include/**",
-                "${workspaceRoot}/**"
+                "${workspaceRoot}/**",
+                "${workspaceFolder}/build"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17"

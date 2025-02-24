@@ -42,21 +42,23 @@ void FTP::RecvFileThread(QString IP,QString port,QString fileName){
 void FTP::on_SendBtn_clicked()
 {
     //QString IP = ui->IPlineEdit->text();
+    ui->SendprogressBar->setValue(0);
     std::thread hThread;
     QString port = ui->PortlineEditSend->text();
     QString fileName = ui->fileNamelineEditSend->text();
-    hThread = std::thread(std::bind(&SendFileThread,this,port,fileName));
+    hThread = std::thread(std::bind(&FTP::SendFileThread,this,port,fileName));
     hThread.detach();
 }
 
 
 void FTP::on_RecvBtn_clicked()
 {
+    ui->RecvprogressBar->setValue(0);
     std::thread hThread;
     QString IP = ui->IPlineEdit->text();
     QString port = ui->PortlineEditRecv->text();
     QString fileName = ui->fileNamelineEditRecv->text();
-    hThread = std::thread(std::bind(&RecvFileThread,this,IP,port,fileName));
+    hThread = std::thread(std::bind(&FTP::RecvFileThread,this,IP,port,fileName));
     hThread.detach();
 }
 

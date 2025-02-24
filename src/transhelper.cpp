@@ -1,5 +1,7 @@
 #include "transhelper.h"
+#include "FTP.h"
 #include <cstring>
+#include <QObject>
 extern "C"{
 #include <winsock2.h> 
 #include <cstdio>
@@ -14,6 +16,7 @@ int TransHelper::SendFile(QString port,QString fileName){
     WSADATA wsaData;
     SOCKET hServSock,hClntSock;
     FILE *fp;
+    int fileSize,value;
     char buf[TransHelper::BUF_SIZE];
     int readCnt;
 
@@ -24,6 +27,7 @@ int TransHelper::SendFile(QString port,QString fileName){
         return ErrorHandling("WSAStartup() error");
 
     fp=fopen(SendfileName.c_str(),"rb");
+    fileSize=(int)getFileSize(fp);
     hServSock=socket(PF_INET,SOCK_STREAM,0);
 
     memset(&servAdr,0,sizeof(servAdr));
@@ -41,9 +45,11 @@ int TransHelper::SendFile(QString port,QString fileName){
         readCnt=fread((void*)buf,1,BUF_SIZE,fp);
         if(readCnt<BUF_SIZE){
             send(hClntSock,(char*)&buf,readCnt,0);
+            value=double(readCnt/fileSize)*100;
             break;
         }
         send(hClntSock,(char*)&buf,BUF_SIZE,0);
+        value=double(BUF_SIZE/fileSize)*100;
     }
     fclose(fp);
     closesocket(hClntSock);
