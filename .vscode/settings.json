@@ -83,7 +83,8 @@
         "qstring": "cpp",
         "variant": "cpp",
         "qmessagebox": "cpp",
-        "qfiledialog": "cpp"
+        "qfiledialog": "cpp",
+        "qobject": "cpp"
     },
     "Codegeex.CompletionDelay": 10,
     "Codegeex.Chat.LanguagePreference": "中文",

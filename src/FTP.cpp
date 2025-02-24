@@ -4,10 +4,12 @@
 #include <QMessageBox>
 #include <thread>
 #include <functional>
+#include <QDebug>
 
 FTP::FTP(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui_FTP)
+    ,signaller_(new SignalForwarder)
 {
     ui->setupUi(this);
     connect(this, &FTP::fileSent, this, [this](bool success){
@@ -22,6 +24,8 @@ FTP::FTP(QWidget* parent)
         else
             QMessageBox::information(this, "警告", "文件接收失败！", QMessageBox::NoButton, QMessageBox::Close);
     });
+    connect(signaller_,&SignalForwarder::SendValueChange,this,&FTP::updateSendValue);
+    connect(signaller_,&SignalForwarder::RecvValueChange,this,&FTP::updateRecvValue);
 }
 
 FTP::~FTP()
@@ -41,7 +45,6 @@ void FTP::RecvFileThread(QString IP,QString port,QString fileName){
 
 void FTP::on_SendBtn_clicked()
 {
-    //QString IP = ui->IPlineEdit->text();
     ui->SendprogressBar->setValue(0);
     std::thread hThread;
     QString port = ui->PortlineEditSend->text();
@@ -69,4 +72,11 @@ void FTP::on_ChooseFileBtn_clicked()
     ui->fileNamelineEditSend->setText(fileName);
 }
 
+void FTP::updateSendValue(int value){
+    qDebug() << "update!";
+    ui->SendprogressBar->setValue(ui->SendprogressBar->value()+value);
+}
 
+void FTP::updateRecvValue(int value){
+    ui->RecvprogressBar->setValue(ui->RecvprogressBar->value()+value);
+}

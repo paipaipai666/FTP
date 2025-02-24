@@ -8,10 +8,12 @@ win32-msvc*:QMAKE_CXXFLAGS += /utf-8
 SOURCES += \
     src/main.cpp\
     src/FTP.cpp\
+    src/signalforwarder.cpp \
     src/transhelper.cpp\
 
 HEADERS += \
     src/FTP.h\
+    src/signalforwarder.h \
     src/transhelper.h\
 
 FORMS += $$PWD/src/FTP.ui

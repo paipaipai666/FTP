@@ -7,7 +7,7 @@ extern "C"{
 #include <cstdio>
 }
 #pragma comment(lib, "lws2_32.lib")
-TransHelper::TransHelper() {}
+SignalForwarder* TransHelper::signaller_ = nullptr;
 int TransHelper::SendFile(QString port,QString fileName){
     
     std::string SendPort = port.toStdString();
@@ -27,7 +27,6 @@ int TransHelper::SendFile(QString port,QString fileName){
         return ErrorHandling("WSAStartup() error");
 
     fp=fopen(SendfileName.c_str(),"rb");
-    fileSize=(int)getFileSize(fp);
     hServSock=socket(PF_INET,SOCK_STREAM,0);
 
     memset(&servAdr,0,sizeof(servAdr));
@@ -46,10 +45,12 @@ int TransHelper::SendFile(QString port,QString fileName){
         if(readCnt<BUF_SIZE){
             send(hClntSock,(char*)&buf,readCnt,0);
             value=double(readCnt/fileSize)*100;
+            TransHelper::EmitSendValue(value);
             break;
         }
         send(hClntSock,(char*)&buf,BUF_SIZE,0);
         value=double(BUF_SIZE/fileSize)*100;
+        TransHelper::EmitSendValue(value);
     }
     fclose(fp);
     closesocket(hClntSock);
@@ -65,6 +66,7 @@ int TransHelper::RecvFile(QString IP,QString port,QString fileName){
     WSADATA wsaData;
     SOCKET hSocket;
     FILE *fp;
+    int fileSize,value;
 
     char buf[BUF_SIZE];
     int readCnt;
@@ -74,6 +76,7 @@ int TransHelper::RecvFile(QString IP,QString port,QString fileName){
         return ErrorHandling("WSAStartup() error");
 
     fp=fopen(RecvFileName.c_str(),"wb");
+    fileSize=(int)getFileSize(fp);
     hSocket=socket(PF_INET,SOCK_STREAM,0);
 
     memset(&servAdr,0,sizeof(servAdr));
@@ -83,8 +86,11 @@ int TransHelper::RecvFile(QString IP,QString port,QString fileName){
 
     connect(hSocket,(SOCKADDR*)&servAdr,sizeof(servAdr));
 
-    while((readCnt=recv(hSocket,buf,BUF_SIZE,0))!=0)
+    while((readCnt=recv(hSocket,buf,BUF_SIZE,0))!=0){
         fwrite((void*)buf,1,readCnt,fp);
+        //value=double(readCnt/fileSize)*100;
+        // TransHelper::EmitSendValue(value);
+    }
 
     fclose(fp);
     closesocket(hSocket);
@@ -102,4 +108,14 @@ size_t TransHelper::getFileSize(FILE * fp){
     fseek(fp,0,SEEK_END);
     size_t size = ftell(fp);
     return size;
+}
+
+void TransHelper::EmitSendValue(int value){
+    if(signaller_)
+        signaller_->EmitSendChange(value);
+}
+
+void TransHelper::EmitRecvChange(int value){
+    if(signaller_)
+        signaller_->EmitRecvChange(value);
 }
