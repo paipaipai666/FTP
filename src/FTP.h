@@ -14,13 +14,12 @@ public:
 signals:
     void fileSent(bool success);
     void fileRecv(bool success);
+    void Sending(int value);
+    void Recving(int value);
 private slots:
     void on_SendBtn_clicked();
-
     void on_RecvBtn_clicked();
-
     void on_ChooseFileBtn_clicked();
-
 private:
     Ui_FTP* ui;
     void SendFileThread(QString port,QString fileName);

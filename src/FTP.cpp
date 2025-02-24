@@ -22,7 +22,6 @@ FTP::FTP(QWidget* parent)
         else
             QMessageBox::information(this, "警告", "文件接收失败！", QMessageBox::NoButton, QMessageBox::Close);
     });
-    
 }
 
 FTP::~FTP()

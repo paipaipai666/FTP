@@ -2,6 +2,7 @@
 #include <cstring>
 extern "C"{
 #include <winsock2.h> 
+#include <cstdio>
 }
 #pragma comment(lib, "lws2_32.lib")
 TransHelper::TransHelper() {}
@@ -89,4 +90,10 @@ int TransHelper::ErrorHandling(const char* message){
     fputs(message,stderr);
     fputc('\n',stderr);
     return 1;
+}
+
+size_t TransHelper::getFileSize(FILE * fp){
+    fseek(fp,0,SEEK_END);
+    size_t size = ftell(fp);
+    return size;
 }
