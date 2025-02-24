@@ -1,5 +1,6 @@
 #ifndef TRANSHELPER_H
 #define TRANSHELPER_H
+#pragma once
 #include <QString>
 class TransHelper
 {

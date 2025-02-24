@@ -1,7 +1,7 @@
 #include "transhelper.h"
 #include <cstring>
 extern "C"{
-#include <winsock2.h>   
+#include <winsock2.h> 
 }
 #pragma comment(lib, "lws2_32.lib")
 TransHelper::TransHelper() {}
@@ -44,8 +44,6 @@ int TransHelper::SendFile(QString port,QString fileName){
         }
         send(hClntSock,(char*)&buf,BUF_SIZE,0);
     }
-    shutdown(hClntSock,SD_SEND);
-
     fclose(fp);
     closesocket(hClntSock);
     closesocket(hServSock);
