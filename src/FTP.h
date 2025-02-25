@@ -7,7 +7,10 @@
 #include <thread>
 class FTP : public QMainWindow {
     Q_OBJECT
-    
+
+private:
+    Ui_FTP* ui;
+    TransHelper * transHelper_;
 public:
     FTP(QWidget* parent = nullptr);
     ~FTP();
@@ -21,8 +24,6 @@ private slots:
     void on_RecvBtn_clicked();
     void on_ChooseFileBtn_clicked();
 private:
-    Ui_FTP* ui;
-    SignalForwarder * signaller_;
     void SendFileThread(QString port,QString fileName);
     void RecvFileThread(QString IP,QString port,QString fileName);
     void updateSendValue(int value);

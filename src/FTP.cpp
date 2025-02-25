@@ -9,43 +9,53 @@
 FTP::FTP(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui_FTP)
-    ,signaller_(new SignalForwarder)
+    ,transHelper_(new TransHelper)
 {
     ui->setupUi(this);
     connect(this, &FTP::fileSent, this, [this](bool success){
-        if(success)
+        if(success){
             QMessageBox::information(this, "成功", "文件发送成功！", QMessageBox::NoButton, QMessageBox::Close);
-        else
+            
+        }
+        else{
             QMessageBox::information(this, "警告", "文件发送失败！", QMessageBox::NoButton, QMessageBox::Close);
+            ui->SendprogressBar->setValue(0);
+        }  
     });
     connect(this, &FTP::fileRecv, this, [this](bool success){
-        if(success)
+        if(success){
             QMessageBox::information(this, "成功", "文件接收成功！", QMessageBox::NoButton, QMessageBox::Close);
-        else
+            
+        }
+        else{
             QMessageBox::information(this, "警告", "文件接收失败！", QMessageBox::NoButton, QMessageBox::Close);
+            ui->SendprogressBar->setValue(0);
+        }
     });
-    connect(signaller_,&SignalForwarder::SendValueChange,this,&FTP::updateSendValue);
-    connect(signaller_,&SignalForwarder::RecvValueChange,this,&FTP::updateRecvValue);
 }
 
 FTP::~FTP()
 {
     delete ui; 
+    delete transHelper_;
 }
 
-void FTP::SendFileThread(QString port,QString fileName){
-    bool success = (TransHelper::SendFile(port, fileName) == 0);
+void FTP::SendFileThread(QString port,QString fileName)
+{
+    bool success = (transHelper_->SendFile(port, fileName) == 0);
     emit fileSent(success);
 }
 
-void FTP::RecvFileThread(QString IP,QString port,QString fileName){
-    bool success = (TransHelper::RecvFile(IP,port, fileName) == 0);
+void FTP::RecvFileThread(QString IP,QString port,QString fileName)
+{
+    bool success = (transHelper_->RecvFile(IP,port, fileName) == 0);
     emit fileRecv(success);
 }
 
 void FTP::on_SendBtn_clicked()
 {
-    ui->SendprogressBar->setValue(0);
+    ui->SendprogressBar->setRange(0, 0);
+    ui->SendprogressBar->setOrientation(Qt::Horizontal);
     std::thread hThread;
     QString port = ui->PortlineEditSend->text();
     QString fileName = ui->fileNamelineEditSend->text();
@@ -56,7 +66,8 @@ void FTP::on_SendBtn_clicked()
 
 void FTP::on_RecvBtn_clicked()
 {
-    ui->RecvprogressBar->setValue(0);
+    ui->RecvprogressBar->setRange(0, 0);
+    ui->RecvprogressBar->setOrientation(Qt::Horizontal);
     std::thread hThread;
     QString IP = ui->IPlineEdit->text();
     QString port = ui->PortlineEditRecv->text();
@@ -73,10 +84,10 @@ void FTP::on_ChooseFileBtn_clicked()
 }
 
 void FTP::updateSendValue(int value){
-    qDebug() << "update!";
-    ui->SendprogressBar->setValue(ui->SendprogressBar->value()+value);
+    qDebug() << "update!in FTP" << value;
+    ui->SendprogressBar->setValue(value);
 }
 
 void FTP::updateRecvValue(int value){
-    ui->RecvprogressBar->setValue(ui->RecvprogressBar->value()+value);
+    ui->RecvprogressBar->setValue(value);
 }

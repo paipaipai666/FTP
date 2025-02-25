@@ -7,7 +7,7 @@ extern "C"{
 #include <cstdio>
 }
 #pragma comment(lib, "lws2_32.lib")
-SignalForwarder* TransHelper::signaller_ = nullptr;
+TransHelper::TransHelper(){};
 int TransHelper::SendFile(QString port,QString fileName){
     
     std::string SendPort = port.toStdString();
@@ -16,7 +16,8 @@ int TransHelper::SendFile(QString port,QString fileName){
     WSADATA wsaData;
     SOCKET hServSock,hClntSock;
     FILE *fp;
-    int fileSize,value;
+    long long fileSize;
+    int value;
     char buf[TransHelper::BUF_SIZE];
     int readCnt;
 
@@ -27,6 +28,7 @@ int TransHelper::SendFile(QString port,QString fileName){
         return ErrorHandling("WSAStartup() error");
 
     fp=fopen(SendfileName.c_str(),"rb");
+    fileSize=(long long)getFileSize(fp);
     hServSock=socket(PF_INET,SOCK_STREAM,0);
 
     memset(&servAdr,0,sizeof(servAdr));
@@ -39,18 +41,13 @@ int TransHelper::SendFile(QString port,QString fileName){
 
     clntAdrSz=sizeof(clntAdr);
     hClntSock=accept(hServSock,(SOCKADDR*)&clntAdr,&clntAdrSz);
-
     while(1){
         readCnt=fread((void*)buf,1,BUF_SIZE,fp);
         if(readCnt<BUF_SIZE){
             send(hClntSock,(char*)&buf,readCnt,0);
-            value=double(readCnt/fileSize)*100;
-            TransHelper::EmitSendValue(value);
             break;
         }
         send(hClntSock,(char*)&buf,BUF_SIZE,0);
-        value=double(BUF_SIZE/fileSize)*100;
-        TransHelper::EmitSendValue(value);
     }
     fclose(fp);
     closesocket(hClntSock);
@@ -88,8 +85,6 @@ int TransHelper::RecvFile(QString IP,QString port,QString fileName){
 
     while((readCnt=recv(hSocket,buf,BUF_SIZE,0))!=0){
         fwrite((void*)buf,1,readCnt,fp);
-        //value=double(readCnt/fileSize)*100;
-        // TransHelper::EmitSendValue(value);
     }
 
     fclose(fp);
@@ -105,17 +100,9 @@ int TransHelper::ErrorHandling(const char* message){
 }
 
 size_t TransHelper::getFileSize(FILE * fp){
+    long cur_offset=ftell(fp);
     fseek(fp,0,SEEK_END);
     size_t size = ftell(fp);
+    fseek(fp,cur_offset,SEEK_SET);
     return size;
-}
-
-void TransHelper::EmitSendValue(int value){
-    if(signaller_)
-        signaller_->EmitSendChange(value);
-}
-
-void TransHelper::EmitRecvChange(int value){
-    if(signaller_)
-        signaller_->EmitRecvChange(value);
 }

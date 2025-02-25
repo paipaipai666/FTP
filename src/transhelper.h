@@ -2,22 +2,19 @@
 #define TRANSHELPER_H
 #pragma once
 #include <QString>
-#include "signalforwarder.h"
+extern "C"{
+    #include <winsock2.h> 
+}
 class TransHelper
 {
-public:
-    TransHelper(SignalForwarder * signaller = nullptr){};
-    int static ErrorHandling(const char* message);
-    int static SendFile(QString port,QString fileName);
-    int static RecvFile(QString IP,QString port,QString fileName);
-    size_t static getFileSize(FILE * fp);
-private:
+private: 
     const int static BUF_SIZE=30;
-    static SignalForwarder * signaller_;
-    void static EmitSendValue(int value);
-    void static EmitRecvChange(int value);
+public:
+    TransHelper();
+    int SendFile(QString port,QString fileName);
+    int RecvFile(QString IP,QString port,QString fileName);
+    size_t static getFileSize(FILE * fp);
+    int static ErrorHandling(const char* message);
 };
 
-
-
-#endif // TRANSHELPER_H
+#endif 

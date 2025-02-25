@@ -74,22 +74,22 @@ void SignalForwarder::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         auto *_t = static_cast<SignalForwarder *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->SendValueChange((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 1: _t->RecvValueChange((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 0: _t->SignalSend((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 1: _t->SignalRecv((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (SignalForwarder::*)(int );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SignalForwarder::SendValueChange)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SignalForwarder::SignalSend)) {
                 *result = 0;
                 return;
             }
         }
         {
             using _t = void (SignalForwarder::*)(int );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SignalForwarder::RecvValueChange)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SignalForwarder::SignalRecv)) {
                 *result = 1;
                 return;
             }
@@ -138,14 +138,14 @@ int SignalForwarder::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void SignalForwarder::SendValueChange(int _t1)
+void SignalForwarder::SignalSend(int _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
-void SignalForwarder::RecvValueChange(int _t1)
+void SignalForwarder::SignalRecv(int _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
